@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  web:
+    build: .
+    network_mode: "host"
+    depends_on:
+      - database
+  redis:
+    image: "redis:alpine"
+  database:
+    image: "postgres"
+    env_file:
+      - database.env
+    ports:
+      - "5431:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U flask_user -d database" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
